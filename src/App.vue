@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, h, resolveComponent } from 'vue'
-// import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView } from 'vue-router'
 
 const ipaddress = ref('192.168.0.123')
 
