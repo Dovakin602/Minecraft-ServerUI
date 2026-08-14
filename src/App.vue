@@ -1,160 +1,282 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/core";
+import { ref, h, resolveComponent } from 'vue'
+// import { RouterLink, RouterView } from 'vue-router'
 
-const greetMsg = ref("");
-const name = ref("");
+const ipaddress = ref('192.168.0.123')
 
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsg.value = await invoke("greet", { name: name.value });
+type Server = {
+  name: string
+  status: 'online' | 'starting' | 'offline'
+  file: string
+  world: string
 }
+
+const data = ref<Server[]>([
+  {
+    name: 'Velocity',
+    status: 'online',
+    file: 'path/path2/velocity.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'Main',
+    status: 'online',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'Bed Wars',
+    status: 'offline',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'village defence',
+    status: 'starting',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'sky Wars',
+    status: 'online',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'Monster fighter',
+    status: 'offline',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'Velocity',
+    status: 'online',
+    file: 'path/path2/velocity.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'Main',
+    status: 'online',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'Bed Wars',
+    status: 'offline',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'village defence',
+    status: 'starting',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'sky Wars',
+    status: 'online',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+  {
+    name: 'Monster fighter',
+    status: 'offline',
+    file: 'path/path2/server.jar',
+    world: 'N/A',
+  },
+])
 </script>
 
 <template>
-  <main class="container">
-    <h1>Welcome to Tauri + Vue</h1>
-
-    <div class="row">
-      <a href="https://vite.dev" target="_blank">
-        <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-      </a>
-      <a href="https://tauri.app" target="_blank">
-        <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-      </a>
+  <div id="main">
+    <div id="title">
+      <p id="titlename">Minecraft ServerUI</p>
+      <p  id="ip">IP: {{ ipaddress }}</p>   
     </div>
-    <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
-
-    <form class="row" @submit.prevent="greet">
-      <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
-    </form>
-    <p>{{ greetMsg }}</p>
-  </main>
+    <div id="scrollable">
+      <table id="servertable">
+        <thead>
+          <tr>
+            <th class="left">Name</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Terminal</th>
+            <th>World</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="ser in data">
+            <td id="namecol">{{ ser.name }}</td>
+            <td v-if="ser.status === 'online'" id="tagon">{{ ser.status }}</td>
+            <td v-else-if="ser.status === 'starting'" id="tagstart">{{ ser.status }}</td>
+            <td v-else id="tagoff">{{ ser.status }}</td>
+            <td v-if="ser.status === 'online'"><button class="startbtn">start</button></td>
+            <td v-else><button class="stopbtn">stop</button></td>
+            <td><button class="terminalbtn">Terminal</button></td>
+            <td class="worldcol">{{ ser.world }}<button class="worldbtn">&#9998</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #249b73);
-}
-
-</style>
-<style>
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-.container {
+#main {
+  font-family: 'Trebuchet MS', sans-serif;
+  width: 100%;
+  height: 100%;
   margin: 0;
-  padding-top: 10vh;
+  padding: 0;
+}
+
+#ip{
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
+  float: right;
+  padding-left: 4rem;
 }
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
+#titlename{
   display: flex;
-  justify-content: center;
+  float: left;
+  padding-left: 4rem;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+#title {
+  display: flex;
 }
 
-a:hover {
-  color: #535bf2;
+#scrollable{
+  height: 80vh;
+  overflow-y: auto;
+  width: 95%;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  scrollbar-color: #12233b #090e18;
 }
 
-h1 {
-  text-align: center;
-}
+#servertable {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  
 
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
+  tr {
+    background-color: #101b2e;
   }
+  tr:hover {
+    background-color: #090e18;
 
-  a:hover {
-    color: #24c8db;
-  }
+    .worldbtn{
+      background-color: #090e18;
+    }
+    .worldbtn:hover{
+      /* color: #101b2e; */
+      /* background-color: rgba(235, 235, 235, 0.64); */
+      border: 1px solid rgba(235, 235, 235, 0.64);
+    }
 
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
   }
-  button:active {
-    background-color: #0f0f0f69;
+  th {
+    background-color: #12233b;
+    padding-right: 2rem;
+    border-bottom: 2px solid #182941;
+    border-right: 2px solid #182941;
+    position: sticky;
+    top: 0;
   }
+  td {
+    padding-right: 2rem;
+    text-align: center;
+    border-bottom: 2px solid #182941;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+  #namecol {
+    padding-right: 3rem;
+    padding-left: 2rem;
+    text-align: left;
+  }
+}
+
+.terminalbtn {
+  background-color: #3d217467;
+  color: rgba(235, 235, 235, 0.64);
+  border: 2px solid #3c2174;
+  border-radius: 4px;
+  padding: 0.4rem;
+  font-weight: bold;
+  font-family: Geneva, Verdana, sans-serif;
+}
+.terminalbtn:hover {
+  background-color: #3c2174;
+}
+
+.startbtn {
+  background-color: #1ac5615e;
+  border-radius: 4px;
+  border: 1px solid #1ac560;
+  padding: 0.4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-weight: bold;
+  font-family: Geneva, Verdana, sans-serif;
+}
+.startbtn:hover {
+  background-color: #1ac560;
+}
+.stopbtn {
+  background-color: rgba(177, 22, 22, 0.349);
+  border-radius: 4px;
+  border: 1px solid rgb(177, 22, 22);
+  padding: 0.4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-weight: bold;
+  font-family: Geneva, Verdana, sans-serif;
+}
+.stopbtn:hover {
+  background-color: rgb(177, 22, 22);
+}
+.worldbtn{
+  color: rgba(235, 235, 235, 0.64);
+  background-color: #101b2e;
+  border: 1px solid #101b2e;
+  /* padding-left: 1rem; */
+}
+
+.wolrdcol{
+  gap: 2rem;
+}
+
+.left {
+  text-align: left;
+  padding-left: 2rem;
+}
+
+#tagon {
+  color: #1ac560;
+}
+#tagoff {
+  color: rgb(182, 9, 9);
+}
+#tagstart {
+  color: rgb(160, 160, 8);
+}
+
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #101b2e;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #090e18;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #090e18;
 }
 
 </style>
