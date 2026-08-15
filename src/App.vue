@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { invoke } from "@tauri-apps/api/core";
+// import { RouterLink, RouterView } from 'vue-router'
+
 
 const ipaddress = ref('192.168.0.123')
 
@@ -11,81 +13,103 @@ type Server = {
   world: string
 }
 
+// const data = ref<Server[]>([
+//   {
+//     name: 'Velocity',
+//     status: 'online',
+//     file: 'path/path2/velocity.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'Main',
+//     status: 'online',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'Bed Wars',
+//     status: 'offline',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'village defence',
+//     status: 'starting',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'sky Wars',
+//     status: 'online',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'Monster fighter',
+//     status: 'offline',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'Velocity',
+//     status: 'online',
+//     file: 'path/path2/velocity.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'Main',
+//     status: 'online',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'Bed Wars',
+//     status: 'offline',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'village defence',
+//     status: 'starting',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'sky Wars',
+//     status: 'online',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+//   {
+//     name: 'Monster fighter',
+//     status: 'offline',
+//     file: 'path/path2/server.jar',
+//     world: 'N/A',
+//   },
+// ])
+
 const data = ref<Server[]>([
   {
-    name: 'Velocity',
-    status: 'online',
-    file: 'path/path2/velocity.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'Main',
-    status: 'online',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'Bed Wars',
+    name: 'no server found',
     status: 'offline',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'village defence',
-    status: 'starting',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'sky Wars',
-    status: 'online',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'Monster fighter',
-    status: 'offline',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'Velocity',
-    status: 'online',
-    file: 'path/path2/velocity.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'Main',
-    status: 'online',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'Bed Wars',
-    status: 'offline',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'village defence',
-    status: 'starting',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'sky Wars',
-    status: 'online',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
-  },
-  {
-    name: 'Monster fighter',
-    status: 'offline',
-    file: 'path/path2/server.jar',
-    world: 'N/A',
+    file: '',
+    world: '',
   },
 ])
-</script>
+
+onMounted(async () => {
+  const result: Array<[string, string]> = await invoke("find_servers");
+  console.log(result);
+  data.value = result.map((server) => ({
+            name: server[1],
+            status: "offline",
+            file: server[0],
+            world: 'N/A'
+        }));
+})
+
+
+</script> 
 
 <template>
   <div id="main">
@@ -110,7 +134,7 @@ const data = ref<Server[]>([
             <td v-if="ser.status === 'online'" id="tagon">{{ ser.status }}</td>
             <td v-else-if="ser.status === 'starting'" id="tagstart">{{ ser.status }}</td>
             <td v-else id="tagoff">{{ ser.status }}</td>
-            <td v-if="ser.status === 'online'"><button class="startbtn">start</button></td>
+            <td v-if="ser.status === 'offline'"><button class="startbtn">start</button></td>
             <td v-else><button class="stopbtn">stop</button></td>
             <td><button class="terminalbtn">Terminal</button></td>
             <td class="worldcol">{{ ser.world }}<button class="worldbtn">&#9998</button></td>
