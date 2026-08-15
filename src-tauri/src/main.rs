@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use local_ip_address::local_ip;
 use std::env;
 use std::fs;
 use std::io::Write;
@@ -10,9 +11,19 @@ use std::process::{Command, Stdio};
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![find_servers, start_server])
+        .invoke_handler(tauri::generate_handler![
+            find_servers,
+            start_server,
+            find_ip
+        ])
         .run(tauri::generate_context!())
         .expect("error");
+}
+
+#[tauri::command]
+fn find_ip() -> String {
+    let my_local_ip = local_ip().unwrap().to_string();
+    my_local_ip
 }
 
 #[tauri::command]

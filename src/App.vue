@@ -98,6 +98,7 @@ const data = ref<Server[]>([
 ])
 
 onMounted(async () => {
+  //loacte servers and put them in a array
   const result: Array<[string, string]> = await invoke("find_servers");
   console.log(result);
   data.value = result.map((server) => ({
@@ -106,6 +107,11 @@ onMounted(async () => {
             file: server[0],
             world: 'N/A'
         }));
+
+  //find ip address
+  ipaddress.value = await invoke("find_ip")
+
+      
 })
 
 
