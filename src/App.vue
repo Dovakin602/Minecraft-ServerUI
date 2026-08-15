@@ -114,6 +114,14 @@ onMounted(async () => {
       
 })
 
+async function start_server(ser: Server) {
+      console.log(ser.name)
+      console.log(ser.file)
+      await invoke("start_server",{strpath: ser.file, name: ser.name});
+      ser.status='online';
+      
+}
+
 
 </script> 
 
@@ -140,7 +148,7 @@ onMounted(async () => {
             <td v-if="ser.status === 'online'" id="tagon">{{ ser.status }}</td>
             <td v-else-if="ser.status === 'starting'" id="tagstart">{{ ser.status }}</td>
             <td v-else id="tagoff">{{ ser.status }}</td>
-            <td v-if="ser.status === 'offline'"><button class="startbtn">start</button></td>
+            <td v-if="ser.status === 'offline'"><button class="startbtn" @click="() => start_server(ser)">start</button></td>
             <td v-else><button class="stopbtn">stop</button></td>
             <td><button class="terminalbtn">Terminal</button></td>
             <td class="worldcol">{{ ser.world }}<button class="worldbtn">&#9998</button></td>
